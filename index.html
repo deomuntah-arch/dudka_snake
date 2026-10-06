@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Dudku.ua Snake — Дудка Змійка</title>
+  <meta name="description" content="Тематична гра змійка для конкурсу дудка-шопу. Збирай сопілки, пускай пару!">
+  
+  <!-- Favicon / Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💨</text></svg>">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Ambient background smoke effect -->
+  <div class="smoke-bg" id="smokeBg"></div>
+
+  <div class="game-wrapper">
+    <!-- Header -->
+    <header class="game-header">
+      <div class="header-title-box">
+        <h1 class="logo-title">
+          <span class="neon-text-green">DUDKA</span> <span class="neon-text-red">SNAKE</span> 💨
+        </h1>
+        <p class="tagline">Збирай магічні сопілки — випускай хмари пари!</p>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="top-bar-actions">
+        <button id="btnSoundToggle" class="btn-icon" title="Звукові ефекти" aria-label="Звукові ефекти">
+          🔊
+        </button>
+        <button id="btnMusicToggle" class="btn-icon" title="Фонова музика" aria-label="Фонова музика">
+          🎵
+        </button>
+        <button id="btnPause" class="btn-icon" title="Пауза" aria-label="Пауза">
+          ⏸️
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats HUD -->
+    <section class="hud-panel">
+      <div class="stat-card">
+        <span class="stat-label">Зібрано сопілок</span>
+        <span class="stat-value neon-green" id="currentScore">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Рекорд</span>
+        <span class="stat-value neon-yellow" id="bestScore">0</span>
+      </div>
+      <div class="stat-card progress-card">
+        <div class="progress-labels">
+          <span class="stat-label">До перемоги</span>
+          <span class="progress-text" id="victoryRemaining">49 кл.</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="victoryProgressBar" style="width: 0%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Canvas Container -->
+    <main class="canvas-container" id="canvasContainer">
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- Particle Canvas for confetti / victory effects -->
+      <canvas id="fxCanvas"></canvas>
+
+      <!-- Overlay: Start / Difficulty Selection -->
+      <div class="overlay active" id="startOverlay">
+        <div class="modal-card">
+          <div class="modal-badge">Творчий Конкурс</div>
+          <h2 class="modal-title">Обери розмір поля</h2>
+          <p class="modal-desc">
+            Перемагай, заповнивши всі клітинки поля!
+          </p>
+
+          <div class="difficulty-grid">
+            <button class="diff-btn active" data-difficulty="easy">
+              <span class="diff-name">Мале поле</span>
+              <span class="diff-size">7 × 7 (49 клітинок)</span>
+              <span class="diff-tag easy">Швидка перемога</span>
+            </button>
+            <button class="diff-btn" data-difficulty="medium">
+              <span class="diff-name">Середнє поле</span>
+              <span class="diff-size">12 × 12 (144 клітинок)</span>
+              <span class="diff-tag medium">Класика</span>
+            </button>
+            <button class="diff-btn" data-difficulty="hard">
+              <span class="diff-name">Велике поле</span>
+              <span class="diff-size">17 × 17 (289 клітинок)</span>
+              <span class="diff-tag hard">Дудка-майстер</span>
+            </button>
+          </div>
+
+          <button id="btnStartGame" class="btn-primary">
+            ПОЧАТИ ГРУ 🚀
+          </button>
+        </div>
+      </div>
+
+      <!-- Overlay: Game Over -->
+      <div class="overlay" id="gameOverOverlay">
+        <div class="modal-card">
+          <div class="skull-icon">💥</div>
+          <h2 class="modal-title neon-red">ГРУ ЗАКІНЧЕНО!</h2>
+          <p class="modal-desc" id="gameOverReason">Врізався у стіну або власний дим!</p>
+
+          <div class="score-summary">
+            <div class="summary-item">
+              <span class="summary-label">Зібрано сопілок:</span>
+              <span class="summary-val" id="finalScore">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Заповнено поля:</span>
+              <span class="summary-val" id="finalPercent">0%</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Твій рекорд:</span>
+              <span class="summary-val neon-red" id="finalBest">0</span>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button id="btnRestart" class="btn-primary">
+              СПРОБУВАТИ ЗНОВУ 🔄
+            </button>
+            <button id="btnChangeDifficulty" class="btn-secondary">
+              Змінити рівень
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay: Victory! -->
+      <div class="overlay" id="victoryOverlay">
+        <div class="modal-card win-card">
+          <div class="trophy-icon">🏆👑💨</div>
+          <h2 class="modal-title neon-green">АБСОЛЮТНА ПЕРЕМОГА!</h2>
+          <p class="modal-desc">
+            Ти повністю заповнив ігрове поле! Шеф зацінив твій неймовірний скіл!
+          </p>
+
+          <div class="score-summary">
+            <div class="summary-item">
+              <span class="summary-label">Поле:</span>
+              <span class="summary-val" id="winBoardSize">7 × 7</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Разом зібрано:</span>
+              <span class="summary-val neon-green" id="winTotalScore">49</span>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button id="btnWinRestart" class="btn-primary">
+              ГРАТИ ЩЕ РАЗ 🎉
+            </button>
+            <button id="btnWinChangeDifficulty" class="btn-secondary">
+              Інша складність
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay: Pause -->
+      <div class="overlay" id="pauseOverlay">
+        <div class="modal-card">
+          <h2 class="modal-title">ПАУЗА ⏸️</h2>
+          <p class="modal-desc">Зроби перекур і продовжуй!</p>
+          <button id="btnResume" class="btn-primary">
+            ПРОДОВЖИТИ ▶️
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Mobile Virtual Controls (D-Pad) -->
+    <div class="dpad-container" id="dpadContainer">
+      <div class="dpad">
+        <button class="dpad-btn dpad-up" id="btnDpadUp" aria-label="Вгору">▲</button>
+        <div class="dpad-row">
+          <button class="dpad-btn dpad-left" id="btnDpadLeft" aria-label="Вліво">◀</button>
+          <div class="dpad-center">💨</div>
+          <button class="dpad-btn dpad-right" id="btnDpadRight" aria-label="Вправо">▶</button>
+        </div>
+        <button class="dpad-btn dpad-down" id="btnDpadDown" aria-label="Вниз">▼</button>
+      </div>
+    </div>
+
+    <!-- Instructions / Footer -->
+    <footer class="game-footer">
+      <div class="instructions-box">
+        <span class="instr-badge">Керування:</span>
+        <span class="instr-desktop">⌨️ Стрілочки або W, A, S, D | Space — Пауза</span>
+        <span class="instr-mobile">📱 Свайпи по екрану або віртуальний D-Pad знизу</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
+
