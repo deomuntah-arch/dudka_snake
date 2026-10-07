@@ -308,6 +308,10 @@ class DudkaSnakeGame {
     if (!this.animFrameId) {
       this.gameLoop(performance.now());
     }
+
+    if (window.propsManager) {
+      window.propsManager.onGameStart();
+    }
   }
 
   spawnFood() {
@@ -451,6 +455,10 @@ class DudkaSnakeGame {
 
       this.updateHUD();
 
+      if (window.propsManager) {
+        window.propsManager.onFoodEaten();
+      }
+
       // Check Victory Condition: Entire field filled!
       const totalCells = this.gridSize * this.gridSize;
       if (this.snake.length >= totalCells) {
@@ -568,6 +576,9 @@ class DudkaSnakeGame {
     document.getElementById('finalBest').textContent = this.getBestScore();
 
     this.gameOverOverlay.classList.add('active');
+    if (window.propsManager) {
+      window.propsManager.onGameOver();
+    }
   }
 
   handleVictory() {
@@ -581,6 +592,10 @@ class DudkaSnakeGame {
 
     this.victoryOverlay.classList.add('active');
     this.triggerConfetti();
+
+    if (window.propsManager) {
+      window.propsManager.onVictory();
+    }
   }
 
   /* ==========================================================================

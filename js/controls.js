@@ -157,6 +157,7 @@ class ControlsManager {
         if (window.audioManager) window.audioManager.initContext();
         btn.classList.add('pressed');
         this.onDirectionChange(dir);
+        if (window.propsManager) window.propsManager.onDpadPress(dir);
         setTimeout(() => btn.classList.remove('pressed'), 120);
       };
 

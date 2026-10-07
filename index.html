@@ -15,12 +15,16 @@
   <!-- Ambient background smoke effect -->
   <div class="smoke-bg" id="smokeBg"></div>
 
+  <!-- Desktop Side Cheerleaders / Props -->
+  <aside class="desktop-props desktop-props-left" id="desktopPropsLeft" aria-hidden="true"></aside>
+  <aside class="desktop-props desktop-props-right" id="desktopPropsRight" aria-hidden="true"></aside>
+
   <div class="game-wrapper">
     <!-- Header -->
     <header class="game-header">
       <div class="header-title-box">
         <h1 class="logo-title">
-          <span class="neon-text-green">DUDKA</span> <span class="neon-text-red">SNAKE</span> 💨
+          <span class="neon-text-green">DUDKA.UA</span> <span class="neon-text-red">SNAKE</span> 💨
         </h1>
         <p class="tagline">Збирай магічні сопілки — випускай хмари пари!</p>
       </div>
@@ -176,17 +180,21 @@
       </div>
     </main>
 
-    <!-- Mobile Virtual Controls (D-Pad) -->
+    <!-- Mobile Virtual Controls (D-Pad) with Side Props -->
     <div class="dpad-container" id="dpadContainer">
+      <div class="dpad-prop dpad-prop-left" id="dpadPropLeft" aria-hidden="true"></div>
+
       <div class="dpad">
         <button class="dpad-btn dpad-up" id="btnDpadUp" aria-label="Вгору">▲</button>
         <div class="dpad-row">
           <button class="dpad-btn dpad-left" id="btnDpadLeft" aria-label="Вліво">◀</button>
-          <div class="dpad-center">💨</div>
+          <div class="dpad-center" id="dpadCenter">💨</div>
           <button class="dpad-btn dpad-right" id="btnDpadRight" aria-label="Вправо">▶</button>
         </div>
         <button class="dpad-btn dpad-down" id="btnDpadDown" aria-label="Вниз">▼</button>
       </div>
+
+      <div class="dpad-prop dpad-prop-right" id="dpadPropRight" aria-hidden="true"></div>
     </div>
 
     <!-- Instructions / Footer -->
@@ -202,6 +210,7 @@
   <!-- Scripts -->
   <script src="js/audio.js"></script>
   <script src="js/controls.js"></script>
+  <script src="js/props.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>
