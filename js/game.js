@@ -14,19 +14,19 @@ const GAME_CONFIG = {
 
   difficulties: {
     easy: {
-      gridSize: 7,      // 7 × 7 (49 клітинок) — легкий рівень та швидка перемога
-      speed: 240,       // 240 мс (повільна та комфортна швидкість)
+      gridSize: 7,      // 7 × 7 (49 клітинок) — супер-казуальний та повільний темп
+      speed: 350,       // 350 мс між кроками (дуже спокійно, комфортно для телефона)
       label: '7 × 7'
     },
     medium: {
-      gridSize: 12,     // 12 × 12 клітинок
-      speed: 160,       // 160 мс
+      gridSize: 12,     // 12 × 12 клітинок — помірний темп
+      speed: 260,       // 260 мс (комфортно та плавно)
       label: '12 × 12'
     },
     hard: {
-      gridSize: 27,     // 27 × 27 клітинок
-      speed: 95,        // 95 мс
-      label: '27 × 27'
+      gridSize: 17,     // 17 × 17 клітинок
+      speed: 190,       // 190 мс (значно повільніше ніж раніше, доступно для смартфона)
+      label: '17 × 17'
     }
   }
 };
@@ -149,20 +149,26 @@ class DudkaSnakeGame {
       const container = document.getElementById('canvasContainer');
       if (!container) return;
 
+      // Reset inline height so CSS max-width and aspect-ratio compute accurately
+      container.style.height = '';
       const rect = container.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
 
+      // Enforce strictly square dimensions: width = height
+      const squareSize = Math.floor(rect.width);
+      container.style.height = `${squareSize}px`;
+
       // Adjust main canvas
-      this.canvas.width = rect.width * dpr;
-      this.canvas.height = rect.height * dpr;
+      this.canvas.width = squareSize * dpr;
+      this.canvas.height = squareSize * dpr;
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       // Adjust FX canvas
-      this.fxCanvas.width = rect.width * dpr;
-      this.fxCanvas.height = rect.height * dpr;
+      this.fxCanvas.width = squareSize * dpr;
+      this.fxCanvas.height = squareSize * dpr;
       this.fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      this.viewSize = rect.width;
+      this.viewSize = squareSize;
       this.cellSize = this.viewSize / this.gridSize;
     };
 
@@ -593,13 +599,13 @@ class DudkaSnakeGame {
         radius: 8 + Math.random() * 14,
         alpha: 0.8,
         decay: 0.015 + Math.random() * 0.02,
-        color: Math.random() > 0.5 ? '#00f0ff' : '#d946ef'
+        color: Math.random() > 0.5 ? '#22c55e' : '#ff3355'
       });
     }
   }
 
   triggerConfetti() {
-    const colors = ['#00f0ff', '#e879f9', '#fbbf24', '#4ade80', '#ffffff'];
+    const colors = ['#22c55e', '#ff3355', '#4ade80', '#ff6b85', '#ffffff'];
     const count = 120;
     this.confettiParticles = [];
 
@@ -847,13 +853,13 @@ class DudkaSnakeGame {
     ctx.save();
     ctx.translate(cx, cy + bob);
 
-    // Neon glow behind vape
+    // Red neon glow and circular backdrop behind vape
     ctx.save();
-    ctx.shadowColor = '#e879f9';
+    ctx.shadowColor = '#ff3355';
     ctx.shadowBlur = 14;
-    ctx.fillStyle = 'rgba(232, 121, 249, 0.15)';
+    ctx.fillStyle = 'rgba(255, 51, 85, 0.28)';
     ctx.beginPath();
-    ctx.arc(0, 0, foodSize * 0.5, 0, Math.PI * 2);
+    ctx.arc(0, 0, foodSize * 0.52, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 

@@ -9,6 +9,8 @@ const DEFAULT_MUSIC_TRACKS = [
   'assets/audio/music/audio.mp3',
   'assets/audio/music/audio2.mp3',
   'assets/audio/music/audio3.mp3',
+  'assets/audio/music/audio4.mp3',
+  'assets/audio/music/audio5.mp3',
   'assets/audio/music/chill_vape_beat.wav'
 ];
 

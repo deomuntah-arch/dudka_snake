@@ -11,7 +11,8 @@ class ControlsManager {
 
     this.touchStartX = 0;
     this.touchStartY = 0;
-    this.touchMinDistance = 25; // minimum swipe distance in pixels
+    this.touchMinDistance = 16; // швидкий та чутливий поріг для легкого керування
+    this.touchTriggered = false;
 
     this.initKeyboard();
     this.initTouchSwipes();
@@ -90,45 +91,57 @@ class ControlsManager {
       if (e.touches.length === 1) {
         this.touchStartX = e.touches[0].clientX;
         this.touchStartY = e.touches[0].clientY;
+        this.touchTriggered = false;
       }
     }, { passive: true });
 
     canvas.addEventListener('touchmove', (e) => {
-      // Prevent scrolling while playing inside canvas
+      // If menu or overlay is open (not actively PLAYING), allow free page scrolling!
+      if (window.game && window.game.gameState !== 'PLAYING') {
+        return;
+      }
+      // Prevent scrolling only while actively steering the snake inside canvas
       if (e.cancelable) {
         e.preventDefault();
+      }
+      if (e.touches.length === 1) {
+        const curX = e.touches[0].clientX;
+        const curY = e.touches[0].clientY;
+        const dx = curX - this.touchStartX;
+        const dy = curY - this.touchStartY;
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+
+        // Instant turn as soon as finger moves past threshold
+        if (Math.max(absX, absY) >= this.touchMinDistance) {
+          if (absX > absY) {
+            this.onDirectionChange(dx > 0 ? { x: 1, y: 0, name: 'RIGHT' } : { x: -1, y: 0, name: 'LEFT' });
+          } else {
+            this.onDirectionChange(dy > 0 ? { x: 0, y: 1, name: 'DOWN' } : { x: 0, y: -1, name: 'UP' });
+          }
+          // Reset coordinates for seamless continuous chained turns
+          this.touchStartX = curX;
+          this.touchStartY = curY;
+          this.touchTriggered = true;
+        }
       }
     }, { passive: false });
 
     canvas.addEventListener('touchend', (e) => {
-      if (e.changedTouches.length === 0) return;
+      if (this.touchTriggered || e.changedTouches.length === 0) return;
 
       const touchEndX = e.changedTouches[0].clientX;
       const touchEndY = e.changedTouches[0].clientY;
-
       const dx = touchEndX - this.touchStartX;
       const dy = touchEndY - this.touchStartY;
-
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
 
-      if (Math.max(absX, absY) < this.touchMinDistance) {
-        return; // tap, not swipe
-      }
-
-      if (absX > absY) {
-        // Horizontal swipe
-        if (dx > 0) {
-          this.onDirectionChange({ x: 1, y: 0, name: 'RIGHT' });
+      if (Math.max(absX, absY) >= this.touchMinDistance) {
+        if (absX > absY) {
+          this.onDirectionChange(dx > 0 ? { x: 1, y: 0, name: 'RIGHT' } : { x: -1, y: 0, name: 'LEFT' });
         } else {
-          this.onDirectionChange({ x: -1, y: 0, name: 'LEFT' });
-        }
-      } else {
-        // Vertical swipe
-        if (dy > 0) {
-          this.onDirectionChange({ x: 0, y: 1, name: 'DOWN' });
-        } else {
-          this.onDirectionChange({ x: 0, y: -1, name: 'UP' });
+          this.onDirectionChange(dy > 0 ? { x: 0, y: 1, name: 'DOWN' } : { x: 0, y: -1, name: 'UP' });
         }
       }
     }, { passive: true });
