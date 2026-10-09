@@ -9,6 +9,15 @@ const GAME_CONFIG = {
   // 1.0 = рівно клітинка, 1.18 = трохи збільшене (за замовчуванням), 1.30 = ще більше
   headScale: 1.18,
 
+  // 👈 ВИБІР ТЕКСТУРИ ПАРИ (ВЕЙП-ХМАРИ):
+  // Доступні варіанти:
+  // - 'assets/images/smoke.png'                (Головний гібрид старої форми + fluffy)
+  // - 'assets/images/smoke_hybrid_fluffy.png'  (Гібрид з додатковою кучерявістю)
+  // - 'assets/images/smoke_hybrid_soft.png'    (М'якший повітряний гібрид)
+  // - 'assets/images/smoke_fluffy.png'         (Повністю кучерявий клубок)
+  // - 'assets/images/smoke_old.png'            (Старий напівпрозорий варіант)
+  smokeTexture: 'assets/images/smoke_hybrid_fluffy.png',
+
   // 👈 ВІРОГІДНІСТЬ ОСОБЛИВОГО ЖАРТІВЛИВОГО ЕФЕКТУ (0.10 = 10%, 0.15 = 15%):
   specialEventChance: 0.2,
 
@@ -133,7 +142,7 @@ class DudkaSnakeGame {
     Promise.all([
       loadImage('assets/images/owner.png'),
       loadImage('assets/images/owner2.png'),
-      loadImage('assets/images/smoke.png'),
+      loadImage(GAME_CONFIG.smokeTexture || 'assets/images/smoke.png'),
       ...vapeSources.map(src => loadImage(src))
     ]).then(([owner1, owner2, smokeImg, ...vapeImgs]) => {
       this.textures.owners = [owner1, owner2].filter(Boolean);
@@ -614,7 +623,7 @@ class DudkaSnakeGame {
         radius: 8 + Math.random() * 14,
         alpha: 0.8,
         decay: 0.015 + Math.random() * 0.02,
-        color: Math.random() > 0.5 ? '#22c55e' : '#ff3355'
+        color: Math.random() > 0.4 ? '#ffffff' : (Math.random() > 0.5 ? '#22c55e' : '#ff3355')
       });
     }
   }

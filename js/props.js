@@ -15,7 +15,7 @@ class PropsManager {
       { id: 'joker', name: 'Джокер', src: 'assets/images/props/joker.png', phrase: 'Чому такий серйозний? 🃏' },
       { id: 'yoda', name: 'Йода', src: 'assets/images/props/yoda.png', phrase: 'Сила дудки з тобою 🧙‍♂️' },
       { id: 'dido', name: 'Шеф', src: 'assets/images/props/dido.png', phrase: 'Дудочку замовляєм! 💨' },
-      { id: 'anime1', name: 'Ґріфіт', src: 'assets/images/props/anime1.png', phrase: 'Справжній друг ніколи не залежить від чужої сопілки! 💨' }
+      { id: 'anime1', name: 'Ґріфіт', src: 'assets/images/props/anime1.png', phrase: 'Справжній друг - сопілка! 💨' }
 
 
     ];
